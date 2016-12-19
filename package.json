@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node --use_strict master.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node --use_strict master.js"
   },
   "repository": {
     "type": "git",
@@ -18,8 +18,12 @@
   },
   "homepage": "https://github.com/viliusvaic/taskplanner#readme",
   "dependencies": {
+    "handlebars": "^4.0.6",
     "hapi": "^16.0.2",
     "inert": "^4.0.3",
     "vision": "^4.1.1"
+  },
+  "engines": {
+    "node": "6.3.0"
   }
 }
