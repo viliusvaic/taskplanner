@@ -21,6 +21,7 @@
     "handlebars": "^4.0.6",
     "hapi": "^16.0.2",
     "inert": "^4.0.3",
+    "mongodb": "^2.2.16",
     "vision": "^4.1.1"
   },
   "engines": {
