@@ -2,6 +2,8 @@ const Hapi = require('hapi');
 const Vision = require('vision');
 const Inert = require('inert');
 
+const userService = require('./services/usersService');
+
 const server = new Hapi.Server();
 
 server.connection({
@@ -17,6 +19,13 @@ server.views({
     engines: {
         html: require('handlebars'),
     },
+});
+
+server.state('cookies', {
+    ttl: 24 * 60 * 60 * 1000,
+    isSecure: false,
+    path: '/',
+    encoding: 'base64json'
 });
 
 server.route({
@@ -35,8 +44,27 @@ server.route({
     method: 'GET',
     path: '/',
     handler: (request, reply) => {
-        reply.view('index.html');
+        const htmlData = userService.generateNavBar(request.state.cookies);
+        reply.view('index.html', {htmlData});
     },
+});
+
+server.route({
+    method: 'POST',
+    path: '/register',
+    handler: userService.register,
+});
+
+server.route({
+    method: 'POST',
+    path: '/login',
+    handler: userService.login,
+});
+
+server.route({
+    method: 'GET',
+    path: '/logout',
+    handler: userService.logout,
 });
 
 

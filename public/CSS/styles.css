@@ -1,0 +1,45 @@
+body {
+    height: 95vh;
+}
+
+.error2 {
+    width: 80%;
+    margin: auto;
+    color: red;
+    text-align: center;
+}
+
+#main-container {
+    width: 100%;
+    display: -webkit-flex;
+    display: flex;
+    justify-content: space-around;
+    border: 1px solid rgb(127, 0, 0);
+    border: 1px solid rgba(255, 0, 0, .5);
+    height: 90vh;
+ }
+
+.sub-cont {
+    width: 30%;
+    border: 1px solid rgb(0, 0, 0);
+    border: 1px solid rgba(0, 0, 0, .5);
+}
+
+.navbar {
+    height: 5vh;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.add-btn {
+    width: 100%;
+}
+
+.task {
+    border: 1px solid rgb(0, 0, 0);
+    border: 1px solid rgba(0, 0, 0, .5);
+    background-color: #f2c2c9;
+    height: 100px;
+    width: 100%;
+    border-radius: 20px;
+}

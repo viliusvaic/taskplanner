@@ -1,12 +1,107 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
+{{{htmlData.head}}}
 <body>
-<h1>
-    Hello
-</h1>
+{{{htmlData.navbar}}}
+
+<div id="main-container">
+    <div class="sub-cont">
+        <button class="btn-success add-btn">
+            Add new task
+        </button>
+        <div class="task">
+
+        </div>
+    </div>
+    <div class="sub-cont">
+        <button class="btn-success add-btn">
+            Add new task
+        </button>
+    </div>
+    <div class="sub-cont">
+        <button class="btn-success add-btn">
+            Add new task
+        </button>
+    </div>
+</div>
+
+
+
+<div id="registerModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Registration</h4>
+            </div>
+            <div class="modal-body">
+                <div id="register-error" class="error2"></div>
+                <div class="form-group">
+                    <label for="username-register">Username:</label>
+                    <input type="text" class="form-control" id="username-register" required="">
+                </div>
+                <div class="form-group">
+                    <label for="pwd-register">Password:</label>
+                    <input type="password" class="form-control" id="pwd-register" required="">
+                </div>
+                <button type="submit" onClick="register()" class="btn btn-success">Register</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="loginModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Log in</h4>
+            </div>
+            <div class="modal-body">
+                <div id="login-error" class="error2"></div>
+                <div class="form-group">
+                    <label for="username-register">Username:</label>
+                    <input type="text" class="form-control" id="username-login" required="">
+                </div>
+                <div class="form-group">
+                    <label for="pwd-register">Password:</label>
+                    <input type="password" class="form-control" id="pwd-login" required="">
+                </div>
+                <button type="submit" onClick="login()" class="btn btn-success">Log in</button>
+            </div>
+        </div>
+    </div>
+</div>
 </body>
-</html>
+
+<script>
+    const register = () => {
+        var data = {};
+        data.username = document.getElementById('username-register').value;
+        data.password = document.getElementById('pwd-register').value;
+
+        $.post('./register', {data}, (result) => {
+            if (result.message == 'egzistuoja') {
+                document.getElementById('register-error').innerHTML = "Vartotojas su tokiu vardu ar el. paštu jau yra.";
+            } else {
+                location.reload();
+            }
+        });
+    };
+
+    const login = () => {
+        var data = {};
+        data.username = document.getElementById('username-login').value;
+        data.password = document.getElementById('pwd-login').value;
+
+        $.post('./login', {data}, (result) => {
+            if (result == 'password is wrong') {
+                document.getElementById('login-error').innerHTML = 'The password is incorrect';
+            } else if (result == 'user doesnt exist') {
+                document.getElementById('login-error').innerHTML = 'User does not exist';
+            } else {
+                location.reload();
+            }
+        });
+    };
+
+</script>
