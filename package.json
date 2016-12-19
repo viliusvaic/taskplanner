@@ -1,0 +1,24 @@
+{
+  "name": "taskplanner",
+  "version": "1.0.0",
+  "description": "",
+  "main": "master.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/viliusvaic/taskplanner.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/viliusvaic/taskplanner/issues"
+  },
+  "homepage": "https://github.com/viliusvaic/taskplanner#readme",
+  "dependencies": {
+    "hapi": "^16.0.2",
+    "inert": "^4.0.3",
+    "vision": "^4.1.1"
+  }
+}
