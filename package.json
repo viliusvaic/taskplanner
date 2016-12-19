@@ -2,10 +2,10 @@
   "name": "taskplanner",
   "version": "1.0.0",
   "description": "",
-  "main": "master.js",
+  "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node master.js"
+    "start": "node --use_strict master.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",

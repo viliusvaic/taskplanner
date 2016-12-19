@@ -35,7 +35,7 @@ server.route({
     method: 'GET',
     path: '/',
     handler: (request, reply) => {
-        reply('works');
+        reply.view('index.html');
     },
 });
 
