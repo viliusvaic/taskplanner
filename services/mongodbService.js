@@ -1,11 +1,15 @@
 const MongoClient = require('mongodb').MongoClient;
 const url = 'mongodb://testuser:testuser@ds163677.mlab.com:63677/heroku_9hhqvb1l';
 
+var ObjectId = require('mongodb').ObjectId;
+
 const insertItem = (collection, item, callback) => {
     MongoClient.connect(url, (err, db) => {
-        db.collection(collection).insertOne(item);
+        db.collection(collection).insertOne(item, () => {
+            const id = item._id;
+            callback(id);
+        });
     });
-    callback();
 };
 
 const doesUserExist = (collection, username, callback) => {
@@ -36,9 +40,18 @@ const getUserTasks = (username, callback) => {
     });
 };
 
+const getOneTask = (id, callback) => {
+    MongoClient.connect(url, (err, db) => {
+        db.collection('tasks').find({"_id": ObjectId(id)}).toArray((err, res) => {
+            callback(res[0]);
+        });
+    });
+};
+
 module.exports = {
     insertItem,
     doesUserExist,
     getByUsername,
     getUserTasks,
+    getOneTask,
 };

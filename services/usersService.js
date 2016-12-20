@@ -37,8 +37,7 @@ const register = (request, reply) => {
     hashString(request.payload['data[password]'], (hashed) => {
         mongo.insertItem('users', {
             username: request.payload['data[username]'],
-            password: hashed,
-            tasks: []
+            password: hashed
         }, () => {
             reply();
         });
@@ -74,14 +73,20 @@ const addNewTask = (request, reply) => {
         user: request.payload.user,
         status: 'todo'
     };
-    mongo.insertItem('tasks', task, () => {
-        reply();
+    mongo.insertItem('tasks', task, (inserted) => {
+        reply(inserted);
     });
 };
 
 const getUserTasks = (request, reply) => {
     mongo.getUserTasks(request.query.user, (array) => {
         reply(array);
+    });
+};
+
+const getOneTask = (request, reply) => {
+    mongo.getOneTask(request.query.id, (item) => {
+        reply(item);
     });
 };
 
@@ -108,4 +113,5 @@ module.exports = {
     logout,
     addNewTask,
     getUserTasks,
+    getOneTask,
 }
