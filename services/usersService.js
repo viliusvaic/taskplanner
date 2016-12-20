@@ -69,13 +69,19 @@ const logout = (request, reply) => {
 
 const addNewTask = (request, reply) => {
     const task = {
-        title: request.payload.user,
+        title: request.payload.title,
         description: request.payload.desc,
         user: request.payload.user,
         status: 'todo'
     };
     mongo.insertItem('tasks', task, () => {
         reply();
+    });
+};
+
+const getUserTasks = (request, reply) => {
+    mongo.getUserTasks(request.query.user, (array) => {
+        reply(array);
     });
 };
 
@@ -101,4 +107,5 @@ module.exports = {
     login,
     logout,
     addNewTask,
+    getUserTasks,
 }

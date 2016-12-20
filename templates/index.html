@@ -140,14 +140,12 @@
         var title = document.getElementById('task-title').value;
         var description = document.getElementById('task-des').value;
         $.post('./addtask', {user: user, title: title, desc: description}, (result) => {
-            $(".add-btn").after(generateTaskSnippet(title, description, 'todo'));
+            generateTaskSnippet(title, description, 'todo');
             $("#createTaskModal").modal('toggle');
         });
     };
 
-
-
-    const generateTaskSnippet = (title, desc) => {
+    const generateTaskSnippet = (title, desc, status) => {
         var main = document.createElement('div');
         main.setAttribute('class', 'task');
 
@@ -165,14 +163,25 @@
 
         titleh.appendChild(titletxt);
         titlediv.appendChild(titleh);
-
         descp.appendChild(desctxt);
         descdiv.appendChild(descp);
-
         main.appendChild(titlediv);
         main.appendChild(descdiv);
-
-        return main;
+        if (status == 'todo') {
+            $(".add-btn").after(main);
+        } else if (status == 'doing') {
+            $("#doing-list").prepend(main);
+        } else {
+            $("#done-list").prepend(main);
+        }
     };
+
+    $(document).ready(() => {
+        $.get('./getusertasks', {user: user}, (result) => {
+            result.forEach((item) => {
+                generateTaskSnippet(item.title, item.description, item.status);
+            });
+        });
+    });
 
 </script>

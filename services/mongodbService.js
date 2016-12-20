@@ -28,8 +28,17 @@ const getByUsername = (collection, username, callback) => {
     });
 };
 
+const getUserTasks = (username, callback) => {
+    MongoClient.connect(url, (err, db) => {
+        db.collection('tasks').find({user: username}).toArray((err, res) => {
+            callback(res);
+        });
+    });
+};
+
 module.exports = {
     insertItem,
     doesUserExist,
     getByUsername,
+    getUserTasks,
 };

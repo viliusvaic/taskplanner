@@ -73,6 +73,11 @@ server.route({
     handler: userService.addNewTask,
 });
 
+server.route({
+    method: 'GET',
+    path: '/getusertasks',
+    handler: userService.getUserTasks,
+});
 
 server.start((err) => {
 

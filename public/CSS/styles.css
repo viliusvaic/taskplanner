@@ -22,8 +22,7 @@ body {
 
 .sub-cont {
     width: 30%;
-    border: 1px solid rgb(0, 0, 0);
-    border: 1px solid rgba(0, 0, 0, .5);
+    overflow-y: auto;
 }
 
 .navbar {
