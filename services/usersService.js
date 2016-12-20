@@ -71,7 +71,8 @@ const addNewTask = (request, reply) => {
         title: request.payload.title,
         description: request.payload.desc,
         user: request.payload.user,
-        status: 'todo'
+        status: 'to do',
+        count: 0,
     };
     mongo.insertItem('tasks', task, (inserted) => {
         reply(inserted);
@@ -90,6 +91,17 @@ const getOneTask = (request, reply) => {
     });
 };
 
+const editTask = (request, reply) => {
+    const item = {
+        id: request.payload.id,
+        title: request.payload.title,
+        description: request.payload.desc,
+        status: request.payload.status,
+    }
+    mongo.editTask(item, (res) => {
+        reply(res);
+    });
+};
 
 const hashString = (myString, callback) => {
     bcrypt.genSalt(saltRounds, (err, salt) => {
@@ -114,4 +126,5 @@ module.exports = {
     addNewTask,
     getUserTasks,
     getOneTask,
+    editTask,
 }

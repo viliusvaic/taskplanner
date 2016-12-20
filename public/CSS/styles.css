@@ -145,14 +145,14 @@ textarea {
 }
 
 #details-desc-cont {
-    width: 85%;
+    width: 80%;
     display: flex;
     border-right: solid 1px #e5e5e5;
 }
 
 
 #details-misc {
-    width: 15%;
+    width: 20%;
     padding-left: 2px;
 }
 

@@ -48,10 +48,45 @@ const getOneTask = (id, callback) => {
     });
 };
 
+const editTask = (item, callback) => {
+    MongoClient.connect(url, (err, db) => {
+        if (item.title != undefined && item.description != undefined) {
+            db.collection('tasks').update(
+                {_id: ObjectId(item.id)},
+                {
+                    $set: {
+                        title: item.title,
+                        description: item.description,
+                        status: item.status
+                    }
+                }, () => {
+                    db.collection('tasks').find({_id: ObjectId(item.id)}).toArray((err, res) => {
+                        callback(res[0])
+                    });
+                }
+            );
+        } else {
+            db.collection('tasks').update(
+                {_id: ObjectId(item.id)},
+                {
+                    $set: {
+                        status: item.status
+                    }
+                }, () => {
+                    db.collection('tasks').find({_id: ObjectId(item.id)}).toArray((err, res) => {
+                        callback(res[0])
+                    });
+                }
+            );
+        }
+    });
+};
+
 module.exports = {
     insertItem,
     doesUserExist,
     getByUsername,
     getUserTasks,
     getOneTask,
+    editTask,
 };

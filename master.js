@@ -85,6 +85,12 @@ server.route({
     handler: userService.getOneTask,
 });
 
+server.route({
+    method: 'POST',
+    path: '/edittask',
+    handler: userService.editTask,
+});
+
 server.start((err) => {
 
     if (err) {
