@@ -4,7 +4,7 @@ const mongo = require('./mongodbService');
 const saltRounds = 10;
 
 const generateNavBar = (cookies) => {
-    htmlData = {};
+    var htmlData = {};
 
     htmlData.head = '<head><title>Task Planner</title>' +
         '<meta charset="utf-8">' +
