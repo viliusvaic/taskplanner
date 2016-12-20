@@ -28,7 +28,6 @@ const getByUsername = (collection, username, callback) => {
     });
 };
 
-
 module.exports = {
     insertItem,
     doesUserExist,

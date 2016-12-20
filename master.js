@@ -67,6 +67,12 @@ server.route({
     handler: userService.logout,
 });
 
+server.route({
+    method: 'POST',
+    path: '/addtask',
+    handler: userService.addNewTask,
+});
+
 
 server.start((err) => {
 

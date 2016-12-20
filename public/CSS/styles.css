@@ -1,5 +1,6 @@
 body {
     height: 95vh;
+    background-color: #8b9dc3;
 }
 
 .error2 {
@@ -29,6 +30,17 @@ body {
     height: 5vh;
     margin-bottom: 0;
     padding-bottom: 0;
+    background-color: #3b5998;
+    border-color: #8b9dc3;
+
+}
+
+.navbar .nav > li > a {
+    color: #f7f7f7;
+}
+
+.navbar-default .navbar-brand {
+    color: #f7f7f7;
 }
 
 .add-btn {
@@ -38,8 +50,33 @@ body {
 .task {
     border: 1px solid rgb(0, 0, 0);
     border: 1px solid rgba(0, 0, 0, .5);
-    background-color: #f2c2c9;
-    height: 100px;
+    background-color: #dfe3ee;
+    min-height: 100px;
     width: 100%;
     border-radius: 20px;
+}
+
+.title {
+    background-color: #F5F5F5;
+    border-radius: 5px;
+    width: 96%;
+    margin-left: 2%;
+    margin-right: 2%;
+    text-align: center;
+}
+
+.descr {
+    background-color: #F5F5F5;
+    border-radius: 5px;
+    width: 96%;
+    margin-left: 2%;
+    margin-right: 2%;
+}
+
+.title-txt {
+    color: #4d4d4d;
+}
+
+.descr-txt {
+    color: #4d4d4d;
 }

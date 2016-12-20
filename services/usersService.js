@@ -67,6 +67,19 @@ const logout = (request, reply) => {
     reply().redirect('/').unstate('cookies');
 };
 
+const addNewTask = (request, reply) => {
+    const task = {
+        title: request.payload.user,
+        description: request.payload.desc,
+        user: request.payload.user,
+        status: 'todo'
+    };
+    mongo.insertItem('tasks', task, () => {
+        reply();
+    });
+};
+
+
 const hashString = (myString, callback) => {
     bcrypt.genSalt(saltRounds, (err, salt) => {
         bcrypt.hash(myString, salt, (error, hash) => {
@@ -81,9 +94,11 @@ const checkMatch = (plainString, hashedString, callback) => {
     });
 };
 
+
 module.exports = {
     generateNavBar,
     register,
     login,
     logout,
+    addNewTask,
 }

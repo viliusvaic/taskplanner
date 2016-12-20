@@ -2,25 +2,30 @@
 {{{htmlData.head}}}
 <body>
 {{{htmlData.navbar}}}
-
+<script>
+    var user = '{{htmlData.username}}';
+</script>
 <div id="main-container">
-    <div class="sub-cont">
-        <button class="btn-success add-btn">
+    <div id="todo-list" class="sub-cont">
+        <button class="btn-success add-btn" onclick="createNew()">
             Add new task
         </button>
         <div class="task">
-
+            <div class="title">
+                <h2 class="title-txt">
+                    Task title
+                </h2>
+            </div>
+            <div class="descr">
+                <p class="descr-txt">
+                    This is task description. More text for testing purposes. Ludum dare asd asdawaeawesdasdasdasdasd
+                </p>
+            </div>
         </div>
     </div>
-    <div class="sub-cont">
-        <button class="btn-success add-btn">
-            Add new task
-        </button>
+    <div id="doing-list" class="sub-cont">
     </div>
-    <div class="sub-cont">
-        <button class="btn-success add-btn">
-            Add new task
-        </button>
+    <div id="done-list" class="sub-cont">
     </div>
 </div>
 
@@ -71,6 +76,29 @@
         </div>
     </div>
 </div>
+
+<div id="createTaskModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Create a new task</h4>
+            </div>
+            <div id="ntask" class="modal-body">
+                <div id="create-error" class="error2"></div>
+                <div class="form-group">
+                    <label for="task-title">Title:</label>
+                    <input type="text" class="form-control" id="task-title" required="">
+                </div>
+                <div class="form-group">
+                    <label for="task-des">Description:</label>
+                    <textarea class="form-control" rows="5" id="task-des"></textarea>
+                </div>
+                <button type="submit" onClick="newtask()" class="btn btn-success">Add</button>
+            </div>
+        </div>
+    </div>
+</div>
 </body>
 
 <script>
@@ -102,6 +130,49 @@
                 location.reload();
             }
         });
+    };
+
+    const createNew = () => {
+        $("#createTaskModal").modal('toggle');
+    };
+
+    const newtask = () => {
+        var title = document.getElementById('task-title').value;
+        var description = document.getElementById('task-des').value;
+        $.post('./addtask', {user: user, title: title, desc: description}, (result) => {
+            $(".add-btn").after(generateTaskSnippet(title, description, 'todo'));
+            $("#createTaskModal").modal('toggle');
+        });
+    };
+
+
+
+    const generateTaskSnippet = (title, desc) => {
+        var main = document.createElement('div');
+        main.setAttribute('class', 'task');
+
+        var titlediv = document.createElement('div');
+        titlediv.setAttribute('class', 'title');
+        var titleh = document.createElement('h2');
+        titleh.setAttribute('class', 'title-txt');
+        var titletxt = document.createTextNode(title);
+
+        var descdiv = document.createElement('div');
+        descdiv.setAttribute('class', 'descr');
+        var descp = document.createElement('p');
+        descp.setAttribute('class', 'descr-txt');
+        var desctxt = document.createTextNode(desc);
+
+        titleh.appendChild(titletxt);
+        titlediv.appendChild(titleh);
+
+        descp.appendChild(desctxt);
+        descdiv.appendChild(descp);
+
+        main.appendChild(titlediv);
+        main.appendChild(descdiv);
+
+        return main;
     };
 
 </script>
