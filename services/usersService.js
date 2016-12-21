@@ -25,11 +25,20 @@ const generateNavBar = (cookies) => {
             '<li><a style="cursor: pointer" data-toggle="modal" data-target="#registerModal"><span class="glyphicon glyphicon-user"></span> Register</a></li>' +
             '<li><a style="cursor: pointer" data-toggle="modal" data-target="#loginModal"><span class="glyphicon glyphicon-log-in"></span> Log in</a></li>';
     } else if (cookies.logged && cookies.username) {
-        htmlData.navbar += '<li><a href="/logout">Log out</a></li>';
         htmlData.username = cookies.username;
     }
+    htmlData.navbar += '</ul>';
+    htmlData.navbar += '<ul class="nav navbar-nav navbar-right">';
+    if (cookies != undefined) {
+        htmlData.navbar += '<li class="dropdown">' +
+            '<a class="dropdown-toggle" data-toggle="dropdown" href="#">Menu<span class="caret"></span></a>' +
+            '<ul class="dropdown-menu">' +
+            '<li><a href="/logout">Log out</a></li>' +
+            '<li><a class="pw-change" data-toggle="modal" data-target="#changePwModal">Change Password</a></li>' +
+            '</ul></li>';
+    }
+    htmlData.navbar += '</div></nav>';
 
-    htmlData.navbar += '</ul></div></nav>';
 
     if (cookies != undefined) {
         if (cookies.logged && cookies.username) {
@@ -92,52 +101,21 @@ const logout = (request, reply) => {
     reply().redirect('/').unstate('cookies');
 };
 
-const addNewTask = (request, reply) => {
-    const task = {
-        title: request.payload.title,
-        description: request.payload.desc,
-        user: request.payload.user,
-        status: 'to do',
-        count: 0,
-    };
-    mongo.insertItem('tasks', task, (inserted) => {
-        reply(inserted);
-    });
-};
-
-const getUserTasks = (request, reply) => {
-    mongo.getUserTasks(request.query.user, (array) => {
-        reply(array);
-    });
-};
-
-const getOneTask = (request, reply) => {
-    mongo.getOneTask(request.query.id, (item) => {
-        reply(item);
-    });
-};
-
-const editTask = (request, reply) => {
-    const item = {
-        id: request.payload.id,
-        title: request.payload.title,
-        description: request.payload.desc,
-        status: request.payload.status,
-    }
-    mongo.editTask(item, (res) => {
-        reply(res);
-    });
-};
-
-const addSession = (request, reply) => {
-    mongo.addSession(request.payload.id, () => {
-        reply();
-    });
-};
-
-const deleteTask = (request, reply) => {
-    mongo.deleteTask(request.payload.id, () => {
-        reply();
+const changePassword = (request, reply) => {
+    mongo.getByUsername('users', request.payload.user, (user) => {
+        if (user != undefined) {
+            checkMatch(request.payload.oldpw, user.password, (res) => {
+                if (res) {
+                    hashString(request.payload.newpw, (hashed) => {
+                        mongo.changePassword(request.payload.user, hashed, () => {
+                            reply();
+                        });
+                    });
+                } else {
+                    reply('password is wrong');
+                }
+            });
+        }
     });
 };
 
@@ -161,10 +139,5 @@ module.exports = {
     register,
     login,
     logout,
-    addNewTask,
-    getUserTasks,
-    getOneTask,
-    editTask,
-    addSession,
-    deleteTask,
+    changePassword,
 }

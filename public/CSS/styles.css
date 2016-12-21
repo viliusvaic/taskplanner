@@ -210,3 +210,7 @@ textarea {
 .snippet-foot {
     pointer-events: none;
 }
+
+.pw-change {
+    cursor: pointer;
+}

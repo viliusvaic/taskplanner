@@ -32,6 +32,19 @@ const getByUsername = (collection, username, callback) => {
     });
 };
 
+const changePassword = (username, pw, callback) => {
+    MongoClient.connect(url, (err, db) => {
+        db.collection('users').update(
+            {username: username},
+            {
+                $set: {password: pw}
+            }, () => {
+                callback();
+            }
+        );
+    });
+};
+
 const getUserTasks = (username, callback) => {
     MongoClient.connect(url, (err, db) => {
         db.collection('tasks').find({user: username}).toArray((err, res) => {
@@ -120,4 +133,5 @@ module.exports = {
     editTask,
     addSession,
     deleteTask,
+    changePassword,
 };

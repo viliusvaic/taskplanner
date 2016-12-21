@@ -3,6 +3,7 @@ const Vision = require('vision');
 const Inert = require('inert');
 
 const userService = require('./services/usersService');
+const tasksService = require('./services/tasksService');
 
 const server = new Hapi.Server();
 
@@ -70,37 +71,43 @@ server.route({
 server.route({
     method: 'POST',
     path: '/addtask',
-    handler: userService.addNewTask,
+    handler: tasksService.addNewTask,
 });
 
 server.route({
     method: 'GET',
     path: '/getusertasks',
-    handler: userService.getUserTasks,
+    handler: tasksService.getUserTasks,
 });
 
 server.route({
     method: 'GET',
     path: '/getonetask',
-    handler: userService.getOneTask,
+    handler: tasksService.getOneTask,
 });
 
 server.route({
     method: 'POST',
     path: '/edittask',
-    handler: userService.editTask,
+    handler: tasksService.editTask,
 });
 
 server.route({
     method: 'POST',
     path: '/addsession',
-    handler: userService.addSession,
+    handler: tasksService.addSession,
 });
 
 server.route({
     method: 'POST',
     path: '/deletetask',
-    handler: userService.deleteTask,
+    handler: tasksService.deleteTask,
+});
+
+server.route({
+    method: 'POST',
+    path: '/changepassword',
+    handler: userService.changePassword,
 });
 
 server.start((err) => {

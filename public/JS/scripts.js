@@ -48,7 +48,7 @@ const register = () => {
         document.getElementById('register-error').innerHTML = "All fields are required.";
     } else if (data.password != data.conf) {
         document.getElementById('register-error').innerHTML = "Passwords do not match.";
-    }  else if ( /[^a-zA-Z0-9]/.test(data.username) || /[^a-zA-Z0-9]/.test(data.password)) {
+    } else if ( /[^a-zA-Z0-9]/.test(data.username) || /[^a-zA-Z0-9]/.test(data.password)) {
         document.getElementById('register-error').innerHTML = "There are unallowed symbols";
     } else {
         $.post('./register', {data}, (result) => {
@@ -81,6 +81,28 @@ const login = () => {
     }
 };
 
+const changePassword = () => {
+    const old = document.getElementById('old-pw').value;
+    const newpw = document.getElementById('new-pw').value;
+    const newpw2 = document.getElementById('new-pw2').value;
+
+    if (old == '' || newpw == '' || newpw2 == ''){
+        document.getElementById('change-error').innerHTML = 'Please enter all fields';
+    } else if (newpw != newpw2) {
+        document.getElementById('change-error').innerHTML = 'Passwords do not match';
+    } else if (/[^a-zA-Z0-9]/.test(old) || /[^a-zA-Z0-9]/.test(newpw)) {
+        document.getElementById('change-error').innerHTML = 'There are unallowed symbols.';
+    } else {
+        $.post('./changepassword', {user: user, oldpw: old, newpw: newpw}, (result) => {
+            if (result == 'password is wrong') {
+                document.getElementById('change-error').innerHTML = 'The password is incorrect';
+            } else {
+                $("#changePwModal").modal('toggle');
+            }
+        });
+    }
+};
+
 const createNew = () => {
     $("#createTaskModal").modal('toggle');
 };
@@ -88,15 +110,22 @@ const createNew = () => {
 const newtask = () => {
     var title = document.getElementById('task-title').value;
     var description = document.getElementById('task-des').value;
-    $.post('./addtask', {user: user, title: title, desc: description}, (result) => {
-        generateTaskSnippet(title, description, 'to do', result, '0');
-        $(`#${result}`).on('click', (event) => {
-            $.get('./getonetask', { id: event.target.id }, (item) => {
-                getDetailsModal(item);
+    if (title == '') {
+        document.getElementById('create-error').innerHTML = "Please enter task title";
+    } else if (/^[A-Za-z0-9,.() ]{0,100}$/.test(title) && /^[A-Za-z0-9,.() ]{0,500}$/.test(description)) {
+        $.post('./addtask', {user: user, title: title, desc: description}, (result) => {
+            generateTaskSnippet(title, description, 'to do', result, '0');
+            $(`#${result}`).on('click', (event) => {
+                $.get('./getonetask', { id: event.target.id }, (item) => {
+                    getDetailsModal(item);
+                });
             });
+            $("#createTaskModal").modal('toggle');
         });
-        $("#createTaskModal").modal('toggle');
-    });
+    } else {
+        document.getElementById('create-error').innerHTML = "There are unallowed symbols";
+    }
+
 };
 
 const deleteTask = () => {
@@ -176,6 +205,7 @@ const getDetailsModal = (item) => {
     $('#title-edit').remove();
     $('#details-title').remove();
 
+    document.getElementById('details-error').innerHTML = "";
     titleHtml += `<h4 id="details-title" class="modal-title">${item.title}</h4>` +
         document.getElementById('details-header').innerHTML;
     document.getElementById('details-header').innerHTML = titleHtml;
@@ -203,16 +233,23 @@ const sendEditedTask = () => {
     const title = $('#edit-title-val').val();
     const desc = $('#edit-desc').val();
     const status = $('#list-select').val();
-    $.post('./edittask', {id: id, title: title, desc: desc, status: status}, (res) => {
-        $(`#${id}`).remove();
-        generateTaskSnippet(res.title, res.description, res.status, res._id, res.count);
-        $(`#${res._id}`).on('click', (event) => {
-            $.get('./getonetask', { id: event.target.id }, (item) => {
-                getDetailsModal(item);
+
+    if (title == '') {
+        document.getElementById('details-error').innerHTML = "Please enter task title";
+    } else if (/^[A-Za-z0-9,.() ]{0,100}$/.test(title) && /^[A-Za-z0-9,.() ]{0,500}$/.test(desc)) {
+        $.post('./edittask', {id: id, title: title, desc: desc, status: status}, (res) => {
+            $(`#${id}`).remove();
+            generateTaskSnippet(res.title, res.description, res.status, res._id, res.count);
+            $(`#${res._id}`).on('click', (event) => {
+                $.get('./getonetask', { id: event.target.id }, (item) => {
+                    getDetailsModal(item);
+                });
             });
+            $('#taskDetailsModal').modal('toggle');
         });
-        $('#taskDetailsModal').modal('toggle');
-    });
+    } else {
+        document.getElementById('details-error').innerHTML = "There are unallowed symbols";
+    }
 };
 
 $(document).ready(() => {
