@@ -30,17 +30,43 @@ const generateNavBar = (cookies) => {
     }
 
     htmlData.navbar += '</ul></div></nav>';
+
+    if (cookies != undefined) {
+        if (cookies.logged && cookies.username) {
+            htmlData.body = '<div id="main-container">' +
+                '<div id="todo-list" class="sub-cont">' +
+                '<h1>To do:</h1>' +
+                '<button class="add-btn" onclick="createNew()">' +
+                'Add new task' +
+                '</button>' +
+                '</div>' +
+                '<div id="doing-list" class="sub-cont">' +
+                '<h1 id="doing-label">Doing:</h1>' +
+                '</div>' +
+                '<div id="done-list" class="sub-cont">' +
+                '<h1 id="done-label">Done:</h1>' +
+                '</div>' +
+                '</div>';
+        }
+    }
     return htmlData;
 };
 
 const register = (request, reply) => {
     hashString(request.payload['data[password]'], (hashed) => {
-        mongo.insertItem('users', {
-            username: request.payload['data[username]'],
-            password: hashed
-        }, () => {
-            reply();
+        mongo.doesUserExist('users', request.payload['data[username]'], (res) => {
+            if (!res) {
+                mongo.insertItem('users', {
+                    username: request.payload['data[username]'],
+                    password: hashed
+                }, () => {
+                    reply();
+                });
+            } else {
+                reply('username already exists');
+            }
         });
+
     });
 };
 
@@ -103,6 +129,18 @@ const editTask = (request, reply) => {
     });
 };
 
+const addSession = (request, reply) => {
+    mongo.addSession(request.payload.id, () => {
+        reply();
+    });
+};
+
+const deleteTask = (request, reply) => {
+    mongo.deleteTask(request.payload.id, () => {
+        reply();
+    });
+};
+
 const hashString = (myString, callback) => {
     bcrypt.genSalt(saltRounds, (err, salt) => {
         bcrypt.hash(myString, salt, (error, hash) => {
@@ -127,4 +165,6 @@ module.exports = {
     getUserTasks,
     getOneTask,
     editTask,
+    addSession,
+    deleteTask,
 }

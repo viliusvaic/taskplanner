@@ -48,7 +48,9 @@ textarea {
 
 .add-btn {
     width: 100%;
-    background-color: #0000FF;
+    background-color: #3b5998;
+    color: white;
+    border-radius: 20px;
 }
 
 .add-btn:hover {
@@ -171,4 +173,21 @@ textarea {
 
 #edit-desc {
     width: 90%;
+}
+
+.btn-success {
+    background-color: #8b9dc3;
+    border-color: #3b5998;
+}
+
+.btn-success:hover {
+    background-color: #3b5998;
+}
+
+.btn-success:focus {
+    background-color: #3b5998;
+}
+
+.btn-success:active {
+    background-color: #3b5998;
 }

@@ -91,6 +91,18 @@ server.route({
     handler: userService.editTask,
 });
 
+server.route({
+    method: 'POST',
+    path: '/addsession',
+    handler: userService.addSession,
+});
+
+server.route({
+    method: 'POST',
+    path: '/deletetask',
+    handler: userService.deleteTask,
+});
+
 server.start((err) => {
 
     if (err) {

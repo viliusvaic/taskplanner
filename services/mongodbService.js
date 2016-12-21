@@ -82,6 +82,35 @@ const editTask = (item, callback) => {
     });
 };
 
+const addSession = (id, callback) => {
+    MongoClient.connect(url, (err, db) => {
+        db.collection('tasks').update(
+            {_id: ObjectId(id)},
+            {
+                $inc: {
+                    count: 1,
+                }
+            }, () => {
+                db.collection('tasks').find({_id: ObjectId(id)}).toArray((err, res) => {
+                    callback(res[0])
+                });
+            }, () => {
+                callback();
+            }
+        )
+    });
+};
+
+const deleteTask = (id, callback) => {
+    MongoClient.connect(url, (err, db) => {
+        db.collection('tasks').removeOne(
+            {_id: ObjectId(id)}, () => {
+                callback();
+            }
+        );
+    });
+};
+
 module.exports = {
     insertItem,
     doesUserExist,
@@ -89,4 +118,6 @@ module.exports = {
     getUserTasks,
     getOneTask,
     editTask,
+    addSession,
+    deleteTask,
 };

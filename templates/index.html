@@ -5,21 +5,7 @@
 <script>
     var user = '{{htmlData.username}}';
 </script>
-<div id="main-container">
-    <div id="todo-list" class="sub-cont">
-        <h1>To do:</h1>
-        <button class="btn-success add-btn" onclick="createNew()">
-            Add new task
-        </button>
-    </div>
-    <div id="doing-list" class="sub-cont">
-        <h1 id="doing-label">Doing:</h1>
-    </div>
-    <div id="done-list" class="sub-cont">
-        <h1 id="done-label">Done:</h1>
-    </div>
-</div>
-
+{{{htmlData.body}}}
 
 <div id="registerModal" class="modal fade" role="dialog">
     <div class="modal-dialog">
@@ -37,6 +23,10 @@
                 <div class="form-group">
                     <label for="pwd-register">Password:</label>
                     <input type="password" class="form-control" id="pwd-register" required="">
+                </div>
+                <div class="form-group">
+                    <label for="pwd-register-conf">Repeat password:</label>
+                    <input type="password" class="form-control" id="pwd-register-conf" required="">
                 </div>
                 <button type="submit" onClick="register()" class="btn btn-success">Register</button>
             </div>
@@ -98,7 +88,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div id="details-header" class="modal-header">
-                <button id="edit-btn" type="button" class="btn btn-default" onclick="edit()">Edit</button>
+                <button id="edit-btn" type="button" class="btn btn-success" onclick="edit()">Edit</button>
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
             <div class="modal-body">
@@ -113,13 +103,14 @@
                             <option id="op3">done</option>
                         </select>
                         <p id="sessions"></p>
-                        <button id="start-timer" type="button" class="btn btn-default" onclick="startTimer()">Start</button>
+                        <button id="start-timer" type="button" class="btn btn-success" onclick="startTimer()">Start</button>
                         <p id="timer"></p>
                     </div>
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-default" onclick="sendEditedTask()">Save</button>
+                <button type="button" class="btn btn-success" onclick="deleteTask()">Delete</button>
+                <button type="button" class="btn btn-success" onclick="sendEditedTask()">Save</button>
             </div>
         </div>
     </div>
@@ -146,7 +137,14 @@
             display.text(minutes + ":" + seconds);
 
             if (--timer < 0) {
-                clearInterval(intId);
+                var taskid = document.getElementById('edit-id').value;
+                console.log(taskid);
+                $.post('./addsession', {id: taskid}, () => {
+                    var prev = Number($('#sessions').val());
+                    $('#sessions').val(prev+1);
+                    $('#sessions').html(`Sessions: ${prev+1}`);
+                    stopTimer();
+                });
             }
         }, 1000);
     };
@@ -164,8 +162,8 @@
         data.password = document.getElementById('pwd-register').value;
 
         $.post('./register', {data}, (result) => {
-            if (result.message == 'egzistuoja') {
-                document.getElementById('register-error').innerHTML = "Vartotojas su tokiu vardu ar el. paštu jau yra.";
+            if (result == 'username already exists') {
+                document.getElementById('register-error').innerHTML = "This username already exists.";
             } else {
                 location.reload();
             }
@@ -203,6 +201,14 @@
                 });
             });
             $("#createTaskModal").modal('toggle');
+        });
+    };
+
+    const deleteTask = () => {
+        var id = document.getElementById('edit-id').value;
+        $.post('./deletetask', {id: id}, () => {
+            $(`#${id}`).remove();
+            $('#taskDetailsModal').modal('toggle');
         });
     };
 
@@ -276,6 +282,7 @@
         }
 
         $('#sessions').html(`Sessions: ${item.count}`);
+        $('#sessions').val(item.count);
         $('#taskDetailsModal').modal('toggle');
     };
 
@@ -297,6 +304,9 @@
     };
 
     $(document).ready(() => {
+        if (user == '') {
+            $('#loginModal').modal('toggle');
+        }
         $.get('./getusertasks', {user: user}, (result) => {
             result.forEach((item) => {
                 generateTaskSnippet(item.title, item.description, item.status, item._id);
