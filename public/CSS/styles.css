@@ -83,8 +83,8 @@ textarea {
 }
 
 .title {
-    background-color: #F5F5F5;
-    border-radius: 5px;
+    background-color: #ecf0fb;
+    border-radius: 10px;
     width: 96%;
     margin-left: 2%;
     margin-right: 2%;
@@ -94,8 +94,8 @@ textarea {
 }
 
 .descr {
-    background-color: #F5F5F5;
-    border-radius: 5px;
+    background-color: #ecf0fb;
+    border-radius: 10px;
     width: 96%;
     margin-left: 2%;
     margin-right: 2%;
@@ -111,6 +111,7 @@ textarea {
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
+    font-family: Calibri;
 }
 
 .descr-txt {
@@ -121,6 +122,8 @@ textarea {
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
+    font-family: Calibri;
+    margin-left: 2px;
 }
 
 #title-edit {
@@ -190,4 +193,20 @@ textarea {
 
 .btn-success:active {
     background-color: #3b5998;
+}
+
+.pomodoro {
+    display: inline-block;
+    width: 28px;
+    margin-bottom: 5px;
+    margin-left: 3px;
+}
+
+.counter {
+    margin-left: 5px;
+    display: inline-block;
+}
+
+.snippet-foot {
+    pointer-events: none;
 }

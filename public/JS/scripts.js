@@ -1,0 +1,232 @@
+var intId;
+
+const startTimer = () => {
+    document.getElementById('start-timer').innerHTML = 'Stop';
+    document.getElementById('start-timer').setAttribute('onclick', 'stopTimer()');
+    var duration = 10;
+    var display = $('#timer');
+    var timer = duration, minutes, seconds;
+    intId = setInterval(() => {
+        minutes = parseInt(timer / 60, 10);
+        seconds = parseInt(timer % 60, 10);
+
+        minutes = minutes < 10 ? "0" + minutes : minutes;
+        seconds = seconds < 10 ? "0" + seconds : seconds;
+
+        display.text(minutes + ":" + seconds);
+
+        if (--timer < 0) {
+            var taskid = document.getElementById('edit-id').value;
+            console.log(taskid);
+            $.post('./addsession', {id: taskid}, () => {
+                var prev = Number($('#sessions').val());
+                $('#sessions').val(prev+1);
+                $('#sessions').html(`Sessions: ${prev+1}`);
+                var p = $(`#${taskid}`).children('.snippet-foot').children('.counter');
+                var prev = Number(p.html());
+                p.html(prev+1);
+                stopTimer();
+            });
+        }
+    }, 1000);
+};
+
+const stopTimer = () => {
+    clearInterval(intId);
+    document.getElementById('start-timer').innerHTML = 'Start';
+    document.getElementById('start-timer').setAttribute('onclick', 'startTimer()');
+    document.getElementById('timer').innerHTML = '';
+};
+
+const register = () => {
+    var data = {};
+    data.username = document.getElementById('username-register').value;
+    data.password = document.getElementById('pwd-register').value;
+    data.conf = document.getElementById('pwd-register-conf').value;
+
+    if (data.username == '' || data.password == '' || data.conf == '') {
+        document.getElementById('register-error').innerHTML = "All fields are required.";
+    } else if (data.password != data.conf) {
+        document.getElementById('register-error').innerHTML = "Passwords do not match.";
+    }  else if ( /[^a-zA-Z0-9]/.test(data.username) || /[^a-zA-Z0-9]/.test(data.password)) {
+        document.getElementById('register-error').innerHTML = "There are unallowed symbols";
+    } else {
+        $.post('./register', {data}, (result) => {
+            if (result == 'username already exists') {
+                document.getElementById('register-error').innerHTML = "This username already exists.";
+            } else {
+                location.reload();
+            }
+        });
+    }
+};
+
+const login = () => {
+    var data = {};
+    data.username = document.getElementById('username-login').value;
+    data.password = document.getElementById('pwd-login').value;
+
+    if (data.username == '' || data.password == '') {
+        document.getElementById('login-error').innerHTML = 'Please enter all fields.';
+    } else {
+        $.post('./login', {data}, (result) => {
+            if (result == 'password is wrong') {
+                document.getElementById('login-error').innerHTML = 'The password is incorrect';
+            } else if (result == 'user doesnt exist') {
+                document.getElementById('login-error').innerHTML = 'User does not exist';
+            } else {
+                location.reload();
+            }
+        });
+    }
+};
+
+const createNew = () => {
+    $("#createTaskModal").modal('toggle');
+};
+
+const newtask = () => {
+    var title = document.getElementById('task-title').value;
+    var description = document.getElementById('task-des').value;
+    $.post('./addtask', {user: user, title: title, desc: description}, (result) => {
+        generateTaskSnippet(title, description, 'to do', result, '0');
+        $(`#${result}`).on('click', (event) => {
+            $.get('./getonetask', { id: event.target.id }, (item) => {
+                getDetailsModal(item);
+            });
+        });
+        $("#createTaskModal").modal('toggle');
+    });
+};
+
+const deleteTask = () => {
+    var id = document.getElementById('edit-id').value;
+    $.post('./deletetask', {id: id}, () => {
+        $(`#${id}`).remove();
+        $('#taskDetailsModal').modal('toggle');
+    });
+};
+
+const generateTaskSnippet = (title, desc, status, id, cnt) => {
+    var main = document.createElement('div');
+    main.setAttribute('class', 'task');
+    main.setAttribute('id', id);
+    var titlediv = document.createElement('div');
+    titlediv.setAttribute('class', 'title');
+    var titleh = document.createElement('h2');
+    titleh.setAttribute('class', 'title-txt');
+    var titletxt = document.createTextNode(title);
+
+    var descdiv = document.createElement('div');
+    descdiv.setAttribute('class', 'descr');
+    var descp = document.createElement('p');
+    descp.setAttribute('class', 'descr-txt');
+    var desctxt = document.createTextNode(desc);
+
+    var foot = document.createElement('div');
+    foot.setAttribute('class', 'snippet-foot');
+    var icon = document.createElement('img');
+    var count = document.createElement('p');
+    var countNum = document.createTextNode(cnt);
+    count.appendChild(countNum);
+    count.setAttribute('class', 'counter');
+    icon.setAttribute('src', '../public/icons/pomodoro-counter-empty.png');
+    icon.setAttribute('class', 'pomodoro');
+    foot.appendChild(count);
+    foot.appendChild(icon);
+
+    titleh.appendChild(titletxt);
+    titlediv.appendChild(titleh);
+    descp.appendChild(desctxt);
+    descdiv.appendChild(descp);
+    main.appendChild(titlediv);
+    main.appendChild(descdiv);
+    main.appendChild(foot);
+    if (status == 'to do') {
+        $(".add-btn").after(main);
+    } else if (status == 'doing') {
+        $("#doing-label").after(main);
+    } else {
+        $("#done-label").after(main);
+    }
+};
+
+const edit = () => {
+    const descHtml = '<div class="form-group" style="width: 100%" >' +
+        '<textarea class="form-control" rows="5" id="edit-desc"></textarea>' +
+        '</div>';
+    const desc = document.getElementById('details-desc').innerHTML;
+    $('#details-desc-cont').html(descHtml);
+    $('#edit-desc').html(desc);
+
+    const title = document.getElementById('details-title').innerHTML;
+    $('#details-title').remove();
+    var titleHtml = '';
+    titleHtml += '<div id="title-edit" class="form-group">' +
+        `<input type="text" class="form-control" id="edit-title-val" required="" value="${title}">` +
+        '</div>';
+    titleHtml += document.getElementById('details-header').innerHTML;
+    $('#details-header').html(titleHtml);
+};
+
+const getDetailsModal = (item) => {
+    console.log(item);
+    $('#edit-id').val(item._id);
+    var titleHtml = '';
+    $('#title-edit').remove();
+    $('#details-title').remove();
+
+    titleHtml += `<h4 id="details-title" class="modal-title">${item.title}</h4>` +
+        document.getElementById('details-header').innerHTML;
+    document.getElementById('details-header').innerHTML = titleHtml;
+    const desc = `<p id="details-desc">${item.description}</p>`;
+    $('#details-desc-cont').html(desc);
+
+    document.getElementById('op1').removeAttribute('selected');
+    document.getElementById('op2').removeAttribute('selected');
+    document.getElementById('op3').removeAttribute('selected');
+    if (item.status == 'to do') {
+        document.getElementById('op1').setAttribute('selected', '1');
+    } else if (item.status == 'doing') {
+        document.getElementById('op2').setAttribute('selected', '1');
+    } else {
+        document.getElementById('op3').setAttribute('selected', '1');
+    }
+
+    $('#sessions').html(`Sessions: ${item.count}`);
+    $('#sessions').val(item.count);
+    $('#taskDetailsModal').modal('toggle');
+};
+
+const sendEditedTask = () => {
+    const id = $('#edit-id').val();
+    const title = $('#edit-title-val').val();
+    const desc = $('#edit-desc').val();
+    const status = $('#list-select').val();
+    $.post('./edittask', {id: id, title: title, desc: desc, status: status}, (res) => {
+        $(`#${id}`).remove();
+        generateTaskSnippet(res.title, res.description, res.status, res._id, res.count);
+        $(`#${res._id}`).on('click', (event) => {
+            $.get('./getonetask', { id: event.target.id }, (item) => {
+                getDetailsModal(item);
+            });
+        });
+        $('#taskDetailsModal').modal('toggle');
+    });
+};
+
+$(document).ready(() => {
+    if (user == '') {
+        $('#loginModal').modal('toggle');
+    }
+    $.get('./getusertasks', {user: user}, (result) => {
+        result.forEach((item) => {
+            generateTaskSnippet(item.title, item.description, item.status, item._id, item.count);
+        });
+        $(".task").on('click', (event) => {
+            $.get('./getonetask', { id: event.target.id }, (item) => {
+                getDetailsModal(item);
+            });
+        });
+    });
+});
