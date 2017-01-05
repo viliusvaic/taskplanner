@@ -130,7 +130,7 @@ const newtask = () => {
     var description = document.getElementById('task-des').value;
     var expected = document.getElementById('exp-sessions').value;
     var regTitle = /^[A-Za-z0-9,.()ąčęėįšųūžĄČĘĖĮŠŲŪŽ!? ]{0,100}$/;
-    var regDesc = /^[A-Za-z0-9,.()ąčęėįšųūžĄČĘĖĮŠŲŪŽ!?\n ]{0,500}$/;
+    var regDesc = /^[A-Za-z0-9,.()ąčęėįšųūžĄČĘĖĮŠŲŪŽ!?:\-\n ]{0,500}$/;
     var regExp = /^[0-9]{0,500}$/;
     if (title == '' || expected == '') {
         document.getElementById('create-error').innerHTML = "Please enter title and expected sessions";
@@ -257,7 +257,7 @@ const sendEditedTask = () => {
     const status = $('#list-select').val();
 
     var regTitle = /^[A-Za-z0-9,.()ąčęėįšųūžĄČĘĖĮŠŲŪŽ!? ]{0,100}$/;
-    var regDesc = /^[A-Za-z0-9,.()ąčęėįšųūžĄČĘĖĮŠŲŪŽ!?\n ]{0,500}$/;
+    var regDesc = /^[A-Za-z0-9,.()ąčęėįšųūžĄČĘĖĮŠŲŪŽ!?:\-\n ]{0,500}$/;
 
     if (title == '') {
         document.getElementById('details-error').innerHTML = "Please enter task title";

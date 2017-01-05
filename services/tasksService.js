@@ -2,7 +2,7 @@ const mongo = require('./mongodbService');
 
 const addNewTask = (request, reply) => {
     const regTitle = /^[A-Za-z0-9,.()ąčęėįšųūžĄČĘĖĮŠŲŪŽ!? ]{0,100}$/;
-    const regDesc = /^[A-Za-z0-9,.()ąčęėįšųūžĄČĘĖĮŠŲŪŽ!?\n ]{0,500}$/;
+    const regDesc = /^[A-Za-z0-9,.()ąčęėįšųūžĄČĘĖĮŠŲŪŽ!?:\-\n ]{0,500}$/;
     const regExp = /^[0-9]{0,500}$/;
     const reg = /^[a-zA-Z0-9]{0,50}$/;
 
@@ -40,7 +40,7 @@ const getOneTask = (request, reply) => {
 
 const editTask = (request, reply) => {
     const regTitle = /^[A-Za-z0-9,.()ąčęėįšųūžĄČĘĖĮŠŲŪŽ!? ]{0,100}$/;
-    const regDesc = /^[A-Za-z0-9,.()ąčęėįšųūžĄČĘĖĮŠŲŪŽ!?\n ]{0,500}$/;
+    const regDesc = /^[A-Za-z0-9,.()ąčęėįšųūžĄČĘĖĮŠŲŪŽ!?:\-\n ]{0,500}$/;
 
     if (regTitle.test(request.payload.title) && regDesc.test(request.payload.desc)) {
         const dateModified = new Date().getTime();
