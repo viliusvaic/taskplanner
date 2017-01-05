@@ -9,16 +9,15 @@ const generateNavBar = (cookies) => {
     htmlData.head = '<head><title>Task Planner</title>' +
         '<meta charset="utf-8">' +
         '<meta name="viewport" content="width=device-width, initial-scale=1">' +
-        '<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">' +
-        '<link rel="stylesheet" href="http://www.w3schools.com/lib/w3.css">' +
-        '<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>' +
-        '<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>' +
+        '<link rel="stylesheet" href="../public/CSS/bootstrap.min.css">' +
+        '<link rel="stylesheet" href="../public/CSS/w3.css">' +
+        '<script src="../public/JS/jquery.min.js"></script>' +
+        '<script src="../public/JS/bootstrap.min.js"></script>' +
         '<link rel="stylesheet" href="../public/CSS/styles.css"></head>';
 
 
     htmlData.navbar = '<nav class="navbar navbar-default"><div class="container-fluid">' +
-        '<div class="navbar-header"><a class="navbar-brand" href="/">Task Planner</a></div>' +
-        '<ul class="nav navbar-nav">';
+        '<div class="navbar-header"><a class="navbar-brand" href="/">Task Planner</a></div>';
 
     if (cookies == undefined) {
         htmlData.navbar +=
@@ -27,7 +26,6 @@ const generateNavBar = (cookies) => {
     } else if (cookies.logged && cookies.username) {
         htmlData.username = cookies.username;
     }
-    htmlData.navbar += '</ul>';
     htmlData.navbar += '<ul class="nav navbar-nav navbar-right">';
     if (cookies != undefined) {
         htmlData.navbar += '<li class="dropdown">' +
@@ -35,7 +33,7 @@ const generateNavBar = (cookies) => {
             '<ul class="dropdown-menu">' +
             '<li><a href="/logout">Log out</a></li>' +
             '<li><a class="pw-change" data-toggle="modal" data-target="#changePwModal">Change Password</a></li>' +
-            '</ul></li>';
+            '</ul></li></ul>';
     }
     htmlData.navbar += '</div></nav>';
 

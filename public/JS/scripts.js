@@ -111,8 +111,8 @@ const newtask = () => {
     var title = document.getElementById('task-title').value;
     var description = document.getElementById('task-des').value;
     var expected = document.getElementById('exp-sessions').value;
-    var regTitle = /^[A-Za-z0-9,.()ąčęėįšųūžĄČĘĖĮŠŲŪŽ ]{0,100}$/;
-    var regDesc = /^[A-Za-z0-9,.()ąčęėįšųūžĄČĘĖĮŠŲŪŽ ]{0,500}$/;
+    var regTitle = /^[A-Za-z0-9,.()ąčęėįšųūžĄČĘĖĮŠŲŪŽ!? ]{0,100}$/;
+    var regDesc = /^[A-Za-z0-9,.()ąčęėįšųūžĄČĘĖĮŠŲŪŽ!? ]{0,500}$/;
     var regExp = /^[0-9]{0,500}$/;
     console.log(expected);
     if (title == '' || expected == '') {
@@ -240,9 +240,9 @@ const sendEditedTask = () => {
     const desc = $('#edit-desc').val();
     const status = $('#list-select').val();
 
-    var regTitle = /^[A-Za-z0-9,.()ąčęėįšųūžĄČĘĖĮŠŲŪŽ ]{0,100}$/;
-    var regDesc = /^[A-Za-z0-9,.()ąčęėįšųūžĄČĘĖĮŠŲŪŽ ]{0,500}$/;
-    
+    var regTitle = /^[A-Za-z0-9,.()ąčęėįšųūžĄČĘĖĮŠŲŪŽ!? ]{0,100}$/;
+    var regDesc = /^[A-Za-z0-9,.()ąčęėįšųūžĄČĘĖĮŠŲŪŽ!? ]{0,500}$/;
+
     if (title == '') {
         document.getElementById('details-error').innerHTML = "Please enter task title";
     } else if (regTitle.test(title) && regDesc.test(desc)) {
