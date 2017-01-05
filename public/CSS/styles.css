@@ -214,3 +214,25 @@ textarea {
 .pw-change {
     cursor: pointer;
 }
+
+.delete-btn {
+    background-color: #c33a03;
+    border-color: #980003;
+}
+
+.delete-btn:hover {
+    background-color: #981a00;
+}
+
+.delete-btn:focus {
+    background-color: #980700;
+}
+
+.delete-btn:active {
+    background-color: #980a00;
+}
+
+#exp {
+    margin-bottom: 0px;
+    margin-left: 3px;
+}

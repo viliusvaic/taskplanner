@@ -47,7 +47,7 @@ const changePassword = (username, pw, callback) => {
 
 const getUserTasks = (username, callback) => {
     MongoClient.connect(url, (err, db) => {
-        db.collection('tasks').find({user: username}).toArray((err, res) => {
+        db.collection('tasks').find({user: username}).sort({lastModified: 1}).toArray((err, res) => {
             callback(res);
         });
     });
@@ -70,7 +70,8 @@ const editTask = (item, callback) => {
                     $set: {
                         title: item.title,
                         description: item.description,
-                        status: item.status
+                        status: item.status,
+                        lastModified: item.lastModified,
                     }
                 }, () => {
                     db.collection('tasks').find({_id: ObjectId(item.id)}).toArray((err, res) => {
@@ -83,7 +84,8 @@ const editTask = (item, callback) => {
                 {_id: ObjectId(item.id)},
                 {
                     $set: {
-                        status: item.status
+                        status: item.status,
+                        lastModified: item.lastModified,
                     }
                 }, () => {
                     db.collection('tasks').find({_id: ObjectId(item.id)}).toArray((err, res) => {

@@ -19,9 +19,9 @@ const startTimer = () => {
             var taskid = document.getElementById('edit-id').value;
             console.log(taskid);
             $.post('./addsession', {id: taskid}, () => {
-                var prev = Number($('#sessions').val());
-                $('#sessions').val(prev+1);
-                $('#sessions').html(`Sessions: ${prev+1}`);
+                var prev = Number($('#poms').val());
+                $('#poms').val(prev+1);
+                $('#poms').html(`: ${prev+1}`);
                 var p = $(`#${taskid}`).children('.snippet-foot').children('.counter');
                 var prev = Number(p.html());
                 p.html(prev+1);
@@ -110,10 +110,15 @@ const createNew = () => {
 const newtask = () => {
     var title = document.getElementById('task-title').value;
     var description = document.getElementById('task-des').value;
-    if (title == '') {
-        document.getElementById('create-error').innerHTML = "Please enter task title";
-    } else if (/^[A-Za-z0-9,.() ]{0,100}$/.test(title) && /^[A-Za-z0-9,.() ]{0,500}$/.test(description)) {
-        $.post('./addtask', {user: user, title: title, desc: description}, (result) => {
+    var expected = document.getElementById('exp-sessions').value;
+    var regTitle = /^[A-Za-z0-9,.()ąčęėįšųūžĄČĘĖĮŠŲŪŽ ]{0,100}$/;
+    var regDesc = /^[A-Za-z0-9,.()ąčęėįšųūžĄČĘĖĮŠŲŪŽ ]{0,500}$/;
+    var regExp = /^[0-9]{0,500}$/;
+    console.log(expected);
+    if (title == '' || expected == '') {
+        document.getElementById('create-error').innerHTML = "Please enter title and expected sessions";
+    } else if (regTitle.test(title) && regDesc.test(description) && regExp.test(expected)) {
+        $.post('./addtask', {user: user, title: title, desc: description, exp: expected}, (result) => {
             generateTaskSnippet(title, description, 'to do', result, '0');
             $(`#${result}`).on('click', (event) => {
                 $.get('./getonetask', { id: event.target.id }, (item) => {
@@ -223,8 +228,9 @@ const getDetailsModal = (item) => {
         document.getElementById('op3').setAttribute('selected', '1');
     }
 
-    $('#sessions').html(`Sessions: ${item.count}`);
-    $('#sessions').val(item.count);
+    $('#poms').html(`: ${item.count}`);
+    $('#poms').val(item.count);
+    $('#exp').html(`Exp: ${item.expected}`);
     $('#taskDetailsModal').modal('toggle');
 };
 
@@ -234,9 +240,12 @@ const sendEditedTask = () => {
     const desc = $('#edit-desc').val();
     const status = $('#list-select').val();
 
+    var regTitle = /^[A-Za-z0-9,.()ąčęėįšųūžĄČĘĖĮŠŲŪŽ ]{0,100}$/;
+    var regDesc = /^[A-Za-z0-9,.()ąčęėįšųūžĄČĘĖĮŠŲŪŽ ]{0,500}$/;
+    
     if (title == '') {
         document.getElementById('details-error').innerHTML = "Please enter task title";
-    } else if (/^[A-Za-z0-9,.() ]{0,100}$/.test(title) && /^[A-Za-z0-9,.() ]{0,500}$/.test(desc)) {
+    } else if (regTitle.test(title) && regDesc.test(desc)) {
         $.post('./edittask', {id: id, title: title, desc: desc, status: status}, (res) => {
             $(`#${id}`).remove();
             generateTaskSnippet(res.title, res.description, res.status, res._id, res.count);
