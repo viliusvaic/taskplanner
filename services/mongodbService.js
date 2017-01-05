@@ -1,5 +1,6 @@
 const MongoClient = require('mongodb').MongoClient;
 const url = 'mongodb://testuser:testuser@ds163677.mlab.com:63677/heroku_9hhqvb1l';
+//const url = 'mongodb://localhost:27017/testdb';
 
 var ObjectId = require('mongodb').ObjectId;
 
@@ -126,6 +127,19 @@ const deleteTask = (id, callback) => {
     });
 };
 
+const updateSessionTimer = (username, timer, callback) => {
+    MongoClient.connect(url, (err, db) => {
+        db.collection('users').update(
+            {username: username},
+            {
+                $set: {session: timer}
+            }, () => {
+                callback();
+            }
+        );
+    });
+};
+
 module.exports = {
     insertItem,
     doesUserExist,
@@ -136,4 +150,5 @@ module.exports = {
     addSession,
     deleteTask,
     changePassword,
+    updateSessionTimer,
 };

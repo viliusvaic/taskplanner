@@ -1,19 +1,29 @@
 const mongo = require('./mongodbService');
 
 const addNewTask = (request, reply) => {
-    const modifiedTime = new Date().getTime();
-    const task = {
-        title: request.payload.title,
-        description: request.payload.desc,
-        user: request.payload.user,
-        status: 'to do',
-        count: 0,
-        expected: request.payload.exp,
-        lastModified: modifiedTime,
-    };
-    mongo.insertItem('tasks', task, (inserted) => {
-        reply(inserted);
-    });
+    const regTitle = /^[A-Za-z0-9,.()ąčęėįšųūžĄČĘĖĮŠŲŪŽ!? ]{0,100}$/;
+    const regDesc = /^[A-Za-z0-9,.()ąčęėįšųūžĄČĘĖĮŠŲŪŽ!?\n ]{0,500}$/;
+    const regExp = /^[0-9]{0,500}$/;
+    const reg = /^[a-zA-Z0-9]{0,50}$/;
+
+    if (regTitle.test(request.payload.title) && regDesc.test(request.payload.desc) && regExp.test(request.payload.exp)
+            && reg.test(request.payload.user)) {
+        const modifiedTime = new Date().getTime();
+        const task = {
+            title: request.payload.title,
+            description: request.payload.desc,
+            user: request.payload.user,
+            status: 'to do',
+            count: 0,
+            expected: request.payload.exp,
+            lastModified: modifiedTime,
+        };
+        mongo.insertItem('tasks', task, (inserted) => {
+            reply(inserted);
+        });
+    } else {
+        reply('did not pass validation');
+    }
 };
 
 const getUserTasks = (request, reply) => {
@@ -29,17 +39,24 @@ const getOneTask = (request, reply) => {
 };
 
 const editTask = (request, reply) => {
-    const dateModified = new Date().getTime();
-    const item = {
-        id: request.payload.id,
-        title: request.payload.title,
-        description: request.payload.desc,
-        status: request.payload.status,
-        lastModified: dateModified,
-    };
-    mongo.editTask(item, (res) => {
-        reply(res);
-    });
+    const regTitle = /^[A-Za-z0-9,.()ąčęėįšųūžĄČĘĖĮŠŲŪŽ!? ]{0,100}$/;
+    const regDesc = /^[A-Za-z0-9,.()ąčęėįšųūžĄČĘĖĮŠŲŪŽ!?\n ]{0,500}$/;
+
+    if (regTitle.test(request.payload.title) && regDesc.test(request.payload.desc)) {
+        const dateModified = new Date().getTime();
+        const item = {
+            id: request.payload.id,
+            title: request.payload.title,
+            description: request.payload.desc,
+            status: request.payload.status,
+            lastModified: dateModified,
+        };
+        mongo.editTask(item, (res) => {
+            reply(res);
+        });
+    } else {
+        reply('did not pass validation');
+    }
 };
 
 const addSession = (request, reply) => {

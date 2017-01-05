@@ -3,7 +3,7 @@ var intId;
 const startTimer = () => {
     document.getElementById('start-timer').innerHTML = 'Stop';
     document.getElementById('start-timer').setAttribute('onclick', 'stopTimer()');
-    var duration = 10;
+    var duration = 60 * timerLength;
     var display = $('#timer');
     var timer = duration, minutes, seconds;
     intId = setInterval(() => {
@@ -61,6 +61,21 @@ const register = () => {
     }
 };
 
+const loginModal = () => {
+    $('#loginModal').modal('toggle');
+    $(document).keyup((e) => {
+        if ($('#loginModal').hasClass('in')) {
+            if(e.which == 13) {
+                $('#login-btn').click();
+            }
+        }
+    });
+};
+
+const loginModalOff = () => {
+    $('#loginModal').modal('toggle');
+};
+
 const login = () => {
     var data = {};
     data.username = document.getElementById('username-login').value;
@@ -104,6 +119,9 @@ const changePassword = () => {
 };
 
 const createNew = () => {
+    $('#task-title').val('');
+    $('#task-des').val('');
+    $('#exp-sessions').val('');
     $("#createTaskModal").modal('toggle');
 };
 
@@ -112,9 +130,8 @@ const newtask = () => {
     var description = document.getElementById('task-des').value;
     var expected = document.getElementById('exp-sessions').value;
     var regTitle = /^[A-Za-z0-9,.()ąčęėįšųūžĄČĘĖĮŠŲŪŽ!? ]{0,100}$/;
-    var regDesc = /^[A-Za-z0-9,.()ąčęėįšųūžĄČĘĖĮŠŲŪŽ!? ]{0,500}$/;
+    var regDesc = /^[A-Za-z0-9,.()ąčęėįšųūžĄČĘĖĮŠŲŪŽ!?\n ]{0,500}$/;
     var regExp = /^[0-9]{0,500}$/;
-    console.log(expected);
     if (title == '' || expected == '') {
         document.getElementById('create-error').innerHTML = "Please enter title and expected sessions";
     } else if (regTitle.test(title) && regDesc.test(description) && regExp.test(expected)) {
@@ -204,7 +221,6 @@ const edit = () => {
 };
 
 const getDetailsModal = (item) => {
-    console.log(item);
     $('#edit-id').val(item._id);
     var titleHtml = '';
     $('#title-edit').remove();
@@ -241,7 +257,7 @@ const sendEditedTask = () => {
     const status = $('#list-select').val();
 
     var regTitle = /^[A-Za-z0-9,.()ąčęėįšųūžĄČĘĖĮŠŲŪŽ!? ]{0,100}$/;
-    var regDesc = /^[A-Za-z0-9,.()ąčęėįšųūžĄČĘĖĮŠŲŪŽ!? ]{0,500}$/;
+    var regDesc = /^[A-Za-z0-9,.()ąčęėįšųūžĄČĘĖĮŠŲŪŽ!?\n ]{0,500}$/;
 
     if (title == '') {
         document.getElementById('details-error').innerHTML = "Please enter task title";
@@ -261,9 +277,27 @@ const sendEditedTask = () => {
     }
 };
 
+const changeSessionView = () => {
+    $('#length-txt').text(`Current session length: ${timerLength}`);
+    document.getElementById('timer-error').innerHTML = '';
+    $('#changeTimerModal').modal('toggle');
+};
+
+const changeSessionLength = () => {
+    const mins = Number(document.getElementById('new-timer').value);
+    if (Number.isInteger(mins) && mins > 0) {
+        $.post('./edittimer', {newTimer: mins, user: user}, (res) => {
+            $('#changeTimerModal').modal('toggle');
+            timerLength = mins;
+        });
+    } else {
+        document.getElementById('timer-error').innerHTML = 'Bad data format';
+    }
+};
+
 $(document).ready(() => {
     if (user == '') {
-        $('#loginModal').modal('toggle');
+        loginModal();
     }
     $.get('./getusertasks', {user: user}, (result) => {
         result.forEach((item) => {

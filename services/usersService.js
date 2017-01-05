@@ -17,23 +17,27 @@ const generateNavBar = (cookies) => {
 
 
     htmlData.navbar = '<nav class="navbar navbar-default"><div class="container-fluid">' +
-        '<div class="navbar-header"><a class="navbar-brand" href="/">Task Planner</a></div>';
+        '<div class="navbar-header"><a class="navbar-brand" href="/">Task Planner</a></div>' +
+        '<ul class="nav navbar-nav">';
 
     if (cookies == undefined) {
         htmlData.navbar +=
             '<li><a style="cursor: pointer" data-toggle="modal" data-target="#registerModal"><span class="glyphicon glyphicon-user"></span> Register</a></li>' +
-            '<li><a style="cursor: pointer" data-toggle="modal" data-target="#loginModal"><span class="glyphicon glyphicon-log-in"></span> Log in</a></li>';
-    } else if (cookies.logged && cookies.username) {
+            '<li><a style="cursor: pointer" onclick="loginModal()"><span class="glyphicon glyphicon-log-in"></span> Log in</a></li>';
+    } else if (cookies.logged && cookies.username && cookies.timer) {
         htmlData.username = cookies.username;
+        htmlData.timer = cookies.timer;
     }
+    htmlData.navbar += '</ul>';
     htmlData.navbar += '<ul class="nav navbar-nav navbar-right">';
     if (cookies != undefined) {
         htmlData.navbar += '<li class="dropdown">' +
             '<a class="dropdown-toggle" data-toggle="dropdown" href="#">Menu<span class="caret"></span></a>' +
             '<ul class="dropdown-menu">' +
-            '<li><a href="/logout">Log out</a></li>' +
             '<li><a class="pw-change" data-toggle="modal" data-target="#changePwModal">Change Password</a></li>' +
-            '</ul></li></ul>';
+            '<li><a class="pw-change" onclick="changeSessionView()" ">Session length</a></li>' +
+            '<li><a href="/logout">Log out</a></li>' +
+            '</ul></li>';
     }
     htmlData.navbar += '</div></nav>';
 
@@ -60,12 +64,17 @@ const generateNavBar = (cookies) => {
 };
 
 const register = (request, reply) => {
+    const reg = /[^a-zA-Z0-9]/;
+    if (reg.test(request.payload['data[username]']) || reg.test(request.payload['data[password]'])) {
+        reply('did not pass validation');
+    }
     hashString(request.payload['data[password]'], (hashed) => {
         mongo.doesUserExist('users', request.payload['data[username]'], (res) => {
             if (!res) {
                 mongo.insertItem('users', {
                     username: request.payload['data[username]'],
-                    password: hashed
+                    password: hashed,
+                    session: 25
                 }, () => {
                     reply();
                 });
@@ -78,13 +87,17 @@ const register = (request, reply) => {
 };
 
 const login = (request, reply) => {
+    const reg = /[^a-zA-Z0-9]/;
+    if (reg.test(request.payload['data[username]']) || reg.test(request.payload['data[password]'])) {
+        reply('did not pass validation');
+    }
     const username = request.payload['data[username]'];
     const password = request.payload['data[password]'];
     mongo.getByUsername('users', username, (user) => {
         if (user != undefined) {
             checkMatch(password, user.password, (res) => {
                 if (res) {
-                    reply().state('cookies', {logged: true, username: user.username});
+                    reply().state('cookies', {logged: true, username: user.username, timer: user.session});
                 } else {
                     reply('password is wrong');
                 }
@@ -100,6 +113,10 @@ const logout = (request, reply) => {
 };
 
 const changePassword = (request, reply) => {
+    const reg = /[^a-zA-Z0-9]/;
+    if (reg.test(request.payload.user) || reg.test(request.payload.oldpw) || reg.test(request.payload.newpw)) {
+        reply('did not pass validation');
+    }
     mongo.getByUsername('users', request.payload.user, (user) => {
         if (user != undefined) {
             checkMatch(request.payload.oldpw, user.password, (res) => {
@@ -117,6 +134,12 @@ const changePassword = (request, reply) => {
     });
 };
 
+const editTimer = (request, reply) => {
+    mongo.updateSessionTimer(request.payload.user, request.payload.newTimer, () => {
+        reply().state('cookies', {logged: true, username: request.payload.user, timer: request.payload.newTimer});
+    });
+};
+
 const hashString = (myString, callback) => {
     bcrypt.genSalt(saltRounds, (err, salt) => {
         bcrypt.hash(myString, salt, (error, hash) => {
@@ -131,11 +154,11 @@ const checkMatch = (plainString, hashedString, callback) => {
     });
 };
 
-
 module.exports = {
     generateNavBar,
     register,
     login,
     logout,
     changePassword,
+    editTimer,
 }

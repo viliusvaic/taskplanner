@@ -110,8 +110,13 @@ server.route({
     handler: userService.changePassword,
 });
 
-server.start((err) => {
+server.route({
+    method: 'POST',
+    path: '/edittimer',
+    handler: userService.editTimer,
+});
 
+server.start((err) => {
     if (err) {
         throw err;
     }
