@@ -116,6 +116,12 @@ server.route({
     handler: userService.editTimer,
 });
 
+server.route({
+    method: 'GET',
+    path: '/socialitems',
+    handler: userService.socialItems,
+});
+
 server.start((err) => {
     if (err) {
         throw err;

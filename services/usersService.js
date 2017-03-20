@@ -1,5 +1,6 @@
 const bcrypt = require('bcryptjs');
 const mongo = require('./mongodbService');
+const req = require('request');
 
 const saltRounds = 10;
 
@@ -35,7 +36,7 @@ const generateNavBar = (cookies) => {
             '<a class="dropdown-toggle" data-toggle="dropdown" href="#">Menu<span class="caret"></span></a>' +
             '<ul class="dropdown-menu">' +
             '<li><a class="pw-change" data-toggle="modal" data-target="#changePwModal">Change Password</a></li>' +
-            '<li><a class="pw-change" onclick="changeSessionView()" ">Session length</a></li>' +
+            '<li><a class="pw-change" onclick="changeSessionView()">Session length</a></li>' +
             '<li><a href="/logout">Log out</a></li>' +
             '</ul></li>';
     }
@@ -154,6 +155,16 @@ const checkMatch = (plainString, hashedString, callback) => {
     });
 };
 
+const socialItems = (request, reply) => {
+    req(
+        'https://funnel.tagboard.com/search/roadtrip?excluded_networks=instagram&count=25',
+        (err, res, body) => {
+            const r = JSON.parse(body);
+            reply(r);
+        }
+    )
+};
+
 module.exports = {
     generateNavBar,
     register,
@@ -161,4 +172,5 @@ module.exports = {
     logout,
     changePassword,
     editTimer,
+    socialItems,
 }
